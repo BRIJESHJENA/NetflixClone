@@ -1,0 +1,26 @@
+body::-webkit-scrollbar{
+    display: none;
+}
+
+.row-posters{
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding: 20px;
+}
+
+.row-posters::-webkit-scrollbar{
+    display: none;
+}
+
+.row-poster{
+    object-fit: contain;
+    max-height: 400px;
+    margin-right: 10px;
+    transition: transform 450ms;
+    cursor: pointer;
+}
+
+.row-poster:hover{
+    transform: scale(1.08);
+}
