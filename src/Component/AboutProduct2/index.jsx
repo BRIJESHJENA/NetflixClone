@@ -1,46 +1,60 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 function AboutProduct2() {
   const [product, setProduct] = useState([]);
+  const [loading, setLoading] = useState(false);
   const originalImage = "https://image.tmdb.org/t/p/original";
 
   useEffect(() => {
-    axios
-      .get(
-        "https://api.themoviedb.org/3/discover/tv?api_key=028a2d86553ae3bcc6d599f76486922e"
-      )
-      .then((res) => {
-        setProduct(res.data.results);
-        console.log(res.data.results);
-      });
+    try {
+      setLoading(true);
+      axios
+        .get(
+          "https://api.themoviedb.org/3/discover/movie?api_key=028a2d86553ae3bcc6d599f76486922e&with_genres=35"
+        )
+        .then((res) => {
+          setLoading(false);
+          setProduct(res.data.results);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
   }, []);
 
   const productId = useParams();
   const productDetails = product.filter((x) => x.id == productId.id);
   const products = productDetails[0];
-//   console.log(products);
+  //   console.log(products);
 
   return (
-    <>
+    <div style={{ position: "relative", width: "100%" }}>
+      <div class="text-center bg-black">
+        <div
+          class={loading ? "spinner-border text-white" : ""}
+          role="status"
+        ></div>
+      </div>
       <div className="container-fluid bg-black">
-      {products && (
+        {products && (
           <>
-              <img
-                src={originalImage + products.backdrop_path}
-                alt="" className="img-fluid h-75"
-              />
+            <img
+              src={originalImage + products.backdrop_path}
+              alt=""
+              className="img-fluid  w-100"
+            />
             <div
               className="position-absolute top-0 start-0"
               style={{
                 background: "linear-gradient(90deg,#111 10%,transparent 100%)",
                 width: "43rem",
-                height: "130%"
+                height: "130%",
               }}
             ></div>
             <div
-              className="position-absolute bottom-0 start-0 text-white p-5 text-white p-5"
+              className="position-absolute top-0 text-white p-5 text-white p-5"
               style={{ width: "43rem" }}
             >
               {products.original_title ? (
@@ -58,19 +72,42 @@ function AboutProduct2() {
                   <i className="fas fa-play" style={{ color: "black" }}></i>
                   PLAY
                 </button>
-                <button type="button" className="btn btn-secondary btn-sm">
-                  <i
-                    className="far fa-info-circle"
-                    style={{ color: "white" }}
-                  ></i>
-                  More Info
-                </button>
               </div>
             </div>
           </>
         )}
       </div>
-    </>
+      <div
+        className="container-fluid text-white py-2"
+        style={{ position: "absolute", bottom: 0 }}
+      >
+        <h2 className="mx-4">More Like This</h2>
+        <div className="container-fluid mx-2 row-posters">
+          {product.map((movie, i) => {
+            if (productId.id == movie.id) {
+              return <></>;
+            } else {
+              return (
+                <Link
+                  to={`/comedy/${movie.id}`}
+                  className={
+                    "text-white text-decoration-none opacity bg-transparent"
+                  }
+                >
+                  <div className="row-poster" key={i}>
+                    <img
+                      src={originalImage + movie.poster_path}
+                      style={{ height: "20rem" }}
+                      alt=""
+                    />
+                  </div>
+                </Link>
+              );
+            }
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Carousel } from "react-responsive-carousel";
 import Sliders from "./Sliders";
 import Sliders1 from "./Sliders1";
 import Sliders2 from "./Sliders2";
@@ -10,74 +9,82 @@ import Sliders5 from "./Sliders5";
 
 function Home() {
   const [movies, setMovies] = useState([]);
-  const [active, notActive] = ["carousel-item active", "carousel-item"]
+  const [active, notActive] = ["carousel-item active", "carousel-item"];
+  const [loading, setLoading] = useState(false);
   const originalImage = "https://image.tmdb.org/t/p/original";
 
   useEffect(() => {
-    axios
-      .get(
-        "https://api.themoviedb.org/3/trending/all/day?api_key=028a2d86553ae3bcc6d599f76486922e"
-      )
-      .then((res) => {
-        setMovies(res.data.results);
-        console.log(res.data.results);
-      });
+    try {
+      setLoading(true);
+      axios
+        .get(
+          "https://api.themoviedb.org/3/trending/all/day?api_key=028a2d86553ae3bcc6d599f76486922e"
+        )
+        .then((res) => {
+          setLoading(false);
+          setMovies(res.data.results);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error, "error");
+    }
   }, []);
+
+  const videoOpen = async (id) => {
+    console.log(id);
+
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/movie/271815/videos?api_key=028a2d86553ae3bcc6d599f76486922e&language=en-US`
+      );
+      setLoading(false);
+      console.log(res);
+    } catch (error) {
+      setLoading(false);
+      console.log(error, "error");
+    }
+  };
 
   return (
     <>
-      <div
-        id="carouselExampleSlidesOnly"
-        class="position-relative carousel slide"
-        data-bs-ride="carousel"
-        
-      >
-        <div class="carousel-inner" style={{ height: "80%" }}>
-          {/*<div class="carousel-item active">
-             <img
-              src="https://image.tmdb.org/t/p/original/n6vVs6z8obNbExdD3QHTr4Utu1Z.jpg"
-              class="d-block w-100"
-              alt="..."
-            />
+      {loading && (
+        <>
+          <div class="text-center bg-black">
             <div
-              className="position-absolute bottom-0 start-10 text-white p-5"
-              style={{ marginBottom: "12%" }}
-            >
-              <h1>
-                <b>The Boys</b>
-              </h1>
-              <div className="d-flex">
-                <button type="button" className="btn btn-light btn-sm me-2">
-                  <i className="fas fa-play" style={{ color: "black" }}></i>{" "}
-                  PLAY
-                </button>
-                <button type="button" className="btn btn-secondary btn-sm">
-                  <i
-                    className="far fa-info-circle"
-                    style={{ color: "white" }}
-                  ></i>{" "}
-                  More Info
-                </button>
-              </div>
-            </div> 
-          </div> */}
-          {movies.map((movie, i) => {
-            return (
-              <div class="carousel-item" 
-              key={i}
-              className={i === 0 ? active : notActive}
+              class={loading ? "spinner-border text-white" : ""}
+              role="status"
+            ></div>
+          </div>
+          <div>
+            Please use VPN because of geo restriction from db it will not work
+            in India
+          </div>
+        </>
+      )}
+      <div id="carouselExampleControls" data-bs-ride="carousel">
+        <div className="carousel-inner" style={{ height: "50%" }}>
+          {movies.map((movie, i) => (
+            <div key={i} className={i === 0 ? active : notActive}>
+              <img
+                src={originalImage + movie.backdrop_path}
+                className="d-block w-100"
+                style={{ height: "80vh" }}
+                alt={movie.original_title || movie.original_name}
+              />
+
+              <div
+                className="position-absolute bottom-0 start-0 text-white  py-2"
+                style={{
+                  width: "43rem",
+                  background:
+                    "linear-gradient(95deg,#000000 10%,transparent 100%)",
+                }}
               >
-                <img
-                  src={originalImage + movie.backdrop_path}
-                  class="d-block w-100"
-                  alt="..."
-                />
                 <div
-                  className="position-absolute bottom-0 start-10 text-white p-5 h-100"
+                  className="position-absolute bottom-0 text-white p-5 h-80"
                   style={{
-                    background: "linear-gradient(90deg,#111 10%,transparent 100%)",
                     width: "43rem",
-                    height: "130%"
                   }}
                 >
                   {movie.original_title ? (
@@ -89,9 +96,13 @@ function Home() {
                       <b>{movie.original_name}</b>
                     </h1>
                   )}
-                  <p>{movie.overview}</p>                  
+                  <p>{movie.overview}</p>
                   <div className="d-flex">
-                    <button type="button" className="btn btn-light btn-sm me-2">
+                    <button
+                      type="button"
+                      className="btn btn-light btn-sm me-2"
+                      onClick={() => videoOpen(movie.id)}
+                    >
                       <i className="fas fa-play" style={{ color: "black" }}></i>{" "}
                       PLAY
                     </button>
@@ -105,11 +116,11 @@ function Home() {
                   </div>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
-      
+
       <Sliders1 />
       <Sliders2 />
       <Sliders />

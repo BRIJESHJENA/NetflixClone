@@ -1,18 +1,18 @@
-.posters{
-    align-items: center;
-    justify-content: center;
+.posters {
+  align-items: center;
+  justify-content: center;
 }
 
-.poster{
-    margin: 10px;
-    transition: transform 450ms;
-    cursor: pointer;
+.poster {
+  margin: 10px;
+  transition: transform 450ms;
+  cursor: pointer;
 }
 
-.poster img{
-    width: 20rem;
+.poster img {
+  width: 25rem;
 }
 
-.poster:hover{
-    transform: scale(1.08);
+.poster:hover {
+  transform: scale(1.08);
 }
