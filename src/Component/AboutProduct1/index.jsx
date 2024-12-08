@@ -25,7 +25,7 @@ function AboutProduct1() {
   }, []);
 
   const productId = useParams();
-  const productDetails = product.filter((x) => x.id == productId.id);
+  const productDetails = product.filter((x) => x.id === productId.id);
   const products = productDetails[0];
 
   return (
@@ -83,7 +83,7 @@ function AboutProduct1() {
         <h2 className="mx-4">More Like This</h2>
         <div className="container-fluid mx-2 row-posters">
           {product.map((movie, i) => {
-            if (productId.id == movie.id) {
+            if (productId.id === movie.id) {
               return <></>;
             } else {
               return (
